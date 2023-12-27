@@ -567,6 +567,7 @@ impl MappableCommand {
         command_palette, "Open command palette",
         goto_word, "Jump to a two-character label",
         extend_to_word, "Extend to a two-character label",
+        reveal_current_file, "Reveal current file in explorer",
     );
 }
 
@@ -6297,4 +6298,29 @@ fn jump_to_word(cx: &mut Context, behaviour: Movement) {
         }
     }
     jump_to_label(cx, words, behaviour)
+}
+
+fn reveal_file(cx: &mut Context, path: Option<PathBuf>) {
+    cx.callback.push(Box::new(
+        |compositor: &mut Compositor, cx: &mut compositor::Context| {
+            let Some(editor) = compositor.find::<ui::EditorView>() else { return };
+
+            (|| match editor.explorer.as_mut() {
+                Some(explorer) => match path {
+                    Some(path) => explorer.reveal_file(path),
+                    None => explorer.reveal_current_file(cx),
+                },
+                None => {
+                    editor.explorer = Some(ui::Explorer::new(cx)?);
+                    editor.explorer.as_mut().unwrap().reveal_current_file(cx)?;
+                    Ok(())
+                }
+            })()
+            .unwrap_or_else(|err| cx.editor.set_error(err.to_string()))
+        },
+    ));
+}
+
+fn reveal_current_file(cx: &mut Context) {
+    reveal_file(cx, None)
 }
