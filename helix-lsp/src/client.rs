@@ -656,6 +656,9 @@ impl Client {
                         dynamic_registration: Some(false),
                         resolve_support: None,
                     }),
+                    formatting: Some(lsp::DocumentFormattingClientCapabilities {
+                        dynamic_registration: Some(false),
+                    }),
                     ..Default::default()
                 }),
                 window: Some(lsp::WindowClientCapabilities {
