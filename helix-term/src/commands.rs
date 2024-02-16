@@ -6304,7 +6304,6 @@ fn reveal_file(cx: &mut Context, path: Option<PathBuf>) {
     cx.callback.push(Box::new(
         |compositor: &mut Compositor, cx: &mut compositor::Context| {
             let Some(editor) = compositor.find::<ui::EditorView>() else { return };
-
             (|| match editor.explorer.as_mut() {
                 Some(explorer) => match path {
                     Some(path) => explorer.reveal_file(path),
