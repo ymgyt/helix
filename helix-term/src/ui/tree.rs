@@ -580,9 +580,9 @@ fn render_tree<T: TreeViewItem>(
     let indent = if level > 0 {
         let indicator = if tree.item().is_parent() {
             if tree.is_opened {
-                "⏷"
+                "󰍝"
             } else {
-                "⏵"
+                "󰍟"
             }
         } else {
             " "
