@@ -53,7 +53,7 @@ async fn main_impl() -> Result<i32> {
 {}
 
 USAGE:
-    hx [FLAGS] [files]...
+    hx(explorer-2026-0502) [FLAGS] [files]...
 
 ARGS:
     <files>...    Set the input file to use, position can also be specified via file[:row[:col]]

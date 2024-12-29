@@ -616,6 +616,7 @@ impl MappableCommand {
         goto_prev_tabstop, "Goto next snippet placeholder",
         rotate_selections_first, "Make the first selection your primary one",
         rotate_selections_last, "Make the last selection your primary one",
+        reveal_current_file, "Reveal current file in explorer",
     );
 }
 
@@ -7130,4 +7131,30 @@ fn lsp_or_syntax_workspace_symbol_picker(cx: &mut Context) {
     } else {
         syntax_workspace_symbol_picker(cx);
     }
+}
+
+fn reveal_file(cx: &mut Context, path: Option<PathBuf>) {
+    cx.callback.push(Box::new(
+        |compositor: &mut Compositor, cx: &mut compositor::Context| {
+            let Some(editor) = compositor.find::<ui::EditorView>() else {
+                return;
+            };
+            (|| match editor.explorer.as_mut() {
+                Some(explorer) => match path {
+                    Some(path) => explorer.reveal_file(path),
+                    None => explorer.reveal_current_file(cx),
+                },
+                None => {
+                    editor.explorer = Some(ui::Explorer::new(cx)?);
+                    editor.explorer.as_mut().unwrap().reveal_current_file(cx)?;
+                    Ok(())
+                }
+            })()
+            .unwrap_or_else(|err| cx.editor.set_error(err.to_string()))
+        },
+    ));
+}
+
+fn reveal_current_file(cx: &mut Context) {
+    reveal_file(cx, None)
 }
